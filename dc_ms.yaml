@@ -1,0 +1,84 @@
+version: "2.1"
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin
+    container_name: jellyfin
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${MEDIA_HOME}/appdata/jellyfin:/config
+      - ${MEDIA_HOME}/downloads/tv/complete:/data/tvshows
+      - ${MEDIA_HOME}/downloads/movies/complete:/data/movies
+      - ${MEDIA_HOME}/downloads/:/downloads
+    ports:
+      - 8096:8096
+    restart: unless-stopped
+  
+  transmission_radar:
+    image: linuxserver/transmission:latest
+    container_name: transmission_radar
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${MEDIA_HOME}/appdata/transmission:/config
+      - ${MEDIA_HOME}/downloads/movies:/downloads
+    restart: always
+    ports:
+      - 9091:9091
+  
+  transmission_sonar:
+    image: linuxserver/transmission:latest
+    container_name: transmission_sonar
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${MEDIA_HOME}/appdata/transmission:/config
+      - ${MEDIA_HOME}/downloads/tv:/downloads
+    restart: always
+    ports:
+      - 9092:9091
+    
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    volumes:
+      - ${MEDIA_HOME}/appdata/sonarr:/config
+      - ${MEDIA_HOME}/tv:/tv
+      - ${MEDIA_HOME}/downloads/tv:/downloads
+    ports:
+      - 27021:8989
+    restart: always
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      
+  radarr:
+    image: linuxserver/radarr:latest
+    container_name: radarr
+    volumes:
+      - ${MEDIA_HOME}/appdata/radarr:/config
+      - ${MEDIA_HOME}/movies:/movies
+      - ${MEDIA_HOME}/downloads/movies:/downloads
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+    ports:
+      - 27022:7878
+    restart: always
+    
+  jackett:
+    image: linuxserver/jackett:latest
+    container_name: jackett
+    volumes:
+      - ${MEDIA_HOME}/appdata/jackett:/config
+      - ${MEDIA_HOME}/downloads:/downloads
+    ports:
+      - 27023:9117
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+    restart: always 
+
