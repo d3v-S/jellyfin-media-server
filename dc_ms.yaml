@@ -1,5 +1,9 @@
 version: "2.1"
 services:
+  
+  # PUID, PGID is the id and gid of user. find it using id $USER
+  # MEDIA_HOME is environment variable for directory where it is downloaded.
+  
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
     container_name: jellyfin
@@ -8,12 +12,18 @@ services:
       - PGID=${PGID}
     volumes:
       - ${MEDIA_HOME}/appdata/jellyfin:/config
-      - ${MEDIA_HOME}/downloads/tv/complete:/data/tvshows
-      - ${MEDIA_HOME}/downloads/movies/complete:/data/movies
+      - ${MEDIA_HOME}/downloads/tv/complete:/data/tvshows       # while setting, look into this directory for TV 
+      - ${MEDIA_HOME}/downloads/movies/complete:/data/movies    # this dir for movies.
       - ${MEDIA_HOME}/downloads/:/downloads
     ports:
       - 8096:8096
     restart: unless-stopped
+  
+  # was unable to set up one transmission properly to download movies and tv-series together
+  # so created two transmissions.
+  # transmission_radar is connected to radarr, downloads movies in download/movies folder
+  # transmission_sonar is connected to sonarr, downloaded tv shows in download/tv folder
+  # downloads/movies, downloads/tv folders are monitored by JellyFin.
   
   transmission_radar:
     image: linuxserver/transmission:latest
@@ -23,7 +33,7 @@ services:
       - PGID=${PGID}
     volumes:
       - ${MEDIA_HOME}/appdata/transmission:/config
-      - ${MEDIA_HOME}/downloads/movies:/downloads
+      - ${MEDIA_HOME}/downloads/movies:/downloads           
     restart: always
     ports:
       - 9091:9091
