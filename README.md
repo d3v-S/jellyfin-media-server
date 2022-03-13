@@ -21,7 +21,15 @@ Bare minimum working set up for jellyfin based media server
 
 ## Procedure:
 
-
+- Run docker-compose yaml using ```PUID=1000 PGID=1000 MEDIA_HOME=/home/user/media/ docker-compose -f dc-ms.yaml up```
+- PUID and PGID == ```id $USER```
+- Once everything is up, set up Jellyfin. Pretty intuitive.
+- Set up Jackett: add indexers (basically, list of sites to check for torrent, click on *Add Indexers* and select). 
+- Set up Sonarr/Radarr:
+  - Settings -> indexers -> + -> Torznab (custom). Put in URL of Jackett. (Please see references)
+  - Settings -> download clients -> + -> Transmission. Put in URL of Transmission.
+- Since I could not make it work with one tranmission client and different download folders, I have used 2 transmission containers, exposed on 9091 and 9092 port.
+- So, attach one transmission to Sonarr and other to radarr, so one downloads movies and other tv series in different folders.
 
 
 
